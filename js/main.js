@@ -1,0 +1,256 @@
+// &===========>HTML ELEMENTS============================>
+const model = document.getElementById("model");
+const showModelBtn = document.getElementById("showModelBtn");
+const addBtn = document.getElementById("addBtn");
+const updateBtn = document.getElementById("updateBtn");
+const taskStatus = document.getElementById("status");
+const taskTitle = document.getElementById("title");
+const taskCategory = document.getElementById("category");
+const taskDescription = document.getElementById("description");
+
+const gridBtn = document.getElementById("gridBtn");
+const barsBtn = document.getElementById("barsBtn");
+
+const section = document.querySelectorAll("section");
+
+const containerTasks = document.querySelectorAll(".tasks");
+
+const modeBtn = document.getElementById("mode");
+const root = document.querySelector(":root");
+
+const searchInput = document.getElementById("searchInput");
+const titleAlert = document.getElementById("titleAlert");
+const descAlert = document.getElementById("descAlert");
+
+
+const remainingCounter = document.getElementById("remainingCounter");
+
+// *===========>VARIABLES============================>
+let updatedTaskIndex;
+let color;
+let maxCounter=100
+const container = {
+  inProgress: document.getElementById("inProgress"),
+  nextUp: document.getElementById("nextUp"),
+  done: document.getElementById("done"),
+};
+let tasksArr = JSON.parse(localStorage.getItem("tasks")) || []; //if there is something in taskArr it will bring it else (empty)
+for (let i = 0; i < tasksArr.length; i++) {
+  displayTasks(i);
+}
+
+// ^===================EVENTS======================>
+showModelBtn.addEventListener("click", showModel);
+addBtn.addEventListener("click", addNewTask);
+updateBtn.addEventListener("click", updateTask);
+barsBtn.addEventListener("click", changeViewToPars);
+gridBtn.addEventListener("click", changeViewToGrid);
+modeBtn.addEventListener("click", changeMode);
+searchInput.addEventListener("input", searchTask);
+// ~===========>FUNCTIONS============================>
+function showModel() {
+  model.classList.replace("d-none", "d-flex");
+  document.body.style.overflow = "hidden";
+}
+function hideModel() {
+  model.classList.replace("d-flex", "d-none");
+  addBtn.classList.replace("d-none", "d-block");
+  updateBtn.classList.replace("d-block", "d-none");
+  document.body.style.overflow = "visible";
+  clear();
+}
+//?=================>HIDE MODEL USING ESCAPE
+document.addEventListener("keydown", function (e) {
+  if (e.key == "Escape") {
+    hideModel();
+  }
+});
+//^=================>HIDE MODEL USING SPACE AROUND IT
+
+model.addEventListener("click", function (e) {
+  if (e.srcElement.id == "model") {
+    hideModel();
+  }
+});
+function addNewTask() {
+  if (
+    validate(titleRegex, taskTitle) &&
+    validate(descriptionRegex, taskDescription)
+  ) {
+    let tasksObj = {
+      status: taskStatus.value,
+      category: taskCategory.value,
+      title: taskTitle.value,
+      description: taskDescription.value,
+    };
+    tasksArr.push(tasksObj);
+    setTasksInLocalStorage();
+    hideModel();
+    displayTasks(tasksArr.length - 1);
+    clear();
+  }
+}
+
+function displayTasks(index) {
+  taskHTML = `
+    <div class="task">
+    <h3 class="text-capitalize">${tasksArr[index]?.title}</h3>
+    <p class="description text-capitalize">${tasksArr[index]?.description}</p>
+    <h4 class="category ${tasksArr[index]?.category} text-capitalize">${tasksArr[index]?.category}</h4>
+    <ul class="task-options list-unstyled d-flex gap-3 fs-5 m-0">
+    <li><i class="bi bi-pencil-square" onclick="setTaskForUpdate(${index})"></i></li>
+            <li><i class="bi bi-trash-fill" onclick="deleteTask(${index})"></i></li>
+            <li><i class="bi bi-palette-fill" onclick=" changeColor(event)"></i></li>
+          </ul>
+      </div>
+      `;
+
+  let x = tasksArr[index].status;
+  
+  x.innerHTML = taskHTML;
+  container[x].querySelector(".tasks").innerHTML += taskHTML;
+  setTasksInLocalStorage();
+}
+function deleteTask(index) {
+  emptyContainer(); //empty the container and full it  after delete the index
+  tasksArr.splice(index, 1);
+
+  setTasksInLocalStorage();
+  for (let i = 0; i < tasksArr.length; i++) {
+    displayTasks(i);
+  }
+}
+function emptyContainer() {
+  for (item in container) {
+    container[item].querySelector(".tasks").innerHTML = "";
+  }
+}
+function setTaskForUpdate(index) {
+  showModel();
+  updatedTaskIndex = index;
+  taskStatus.value = tasksArr[index].status;
+  taskCategory.value = tasksArr[index].category;
+  taskTitle.value = tasksArr[index].title;
+  taskDescription.value = tasksArr[index].description;
+  updateBtn.classList.replace("d-none", "d-block");
+  addBtn.classList.replace("d-block", "d-none");
+}
+function setTasksInLocalStorage() {
+  localStorage.setItem("tasks", JSON.stringify(tasksArr));
+}
+function clear() {
+  taskTitle.value = "";
+  taskDescription.value = "";
+  taskTitle.classList.remove("is-valid");
+  taskTitle.classList.remove("is-invalid");
+  taskDescription.classList.remove("is-invalid");
+  taskDescription.classList.remove("is-valid");
+}
+function updateTask() {
+  emptyContainer();
+  tasksArr[updatedTaskIndex].status = taskStatus.value;
+  tasksArr[updatedTaskIndex].category = taskCategory.value;
+  tasksArr[updatedTaskIndex].title = taskTitle.value;
+  tasksArr[updatedTaskIndex].description = taskDescription.value;
+  setTasksInLocalStorage();
+  for (let i = 0; i < tasksArr.length; i++) {
+    displayTasks(i);
+  }
+  hideModel();
+  addBtn.classList.replace("d-none", "d-block");
+  updateBtn.classList.replace("d-block", "d-none");
+  clear();
+}
+function generateColor() {
+  var colorChar = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "a", "b", "c", "d", "e", "f"];
+  color = "#";
+  for (let i = 1; i <= 6; i++) {
+    let random = Math.trunc(Math.random() * colorChar.length);
+    color += colorChar[random];
+  }
+  return color + "22";
+}
+function changeColor(e) {
+  e.target.closest(".task").style.backgroundColor = generateColor();
+}
+function changeViewToPars() {
+  gridBtn.classList.remove("active");
+  barsBtn.classList.add("active");
+  for (let i = 0; i < section.length; i++) {
+    section[i].classList.remove("col-md-6", "col-lg-4");
+  }
+  for (let j = 0; j < containerTasks.length; j++) {
+    containerTasks[j].setAttribute("data-view", "bars");
+  }
+}
+function changeViewToGrid() {
+  gridBtn.classList.add("active");
+  barsBtn.classList.remove("active");
+  for (let i = 0; i < section.length; i++) {
+    section[i].classList.add("col-md-6", "col-lg-4");
+  }
+  for (var j = 0; j < containerTasks.length; j++) {
+    containerTasks[j].removeAttribute("data-view");
+  }
+}
+function changeMode() {
+  if (modeBtn.classList.contains("bi-moon-stars-fill")) {
+    root.style.setProperty("--main-black", "white");
+    root.style.setProperty("--text-color", "black");
+    root.style.setProperty("--sec-black", "#fafafa");
+    root.style.setProperty("--mid-gray", "#dadada");
+    modeBtn.classList.replace("bi-moon-stars-fill", "bi-brightness-high-fill");
+  } else {
+    root.style.setProperty("--main-black", "#0d1117");
+    root.style.setProperty("--text-color", "#a5a6a7");
+    root.style.setProperty("--sec-black", "#161b22");
+    root.style.setProperty("--mid-gray", "#474a4e");
+    modeBtn.classList.replace("bi-brightness-high-fill", "bi-moon-stars-fill");
+  }
+}
+function searchTask() {
+  emptyContainer();
+  // resetCount();
+  var searchKey = searchInput.value;
+  for (var i = 0; i < tasksArr.length; i++) {
+    if (
+      tasksArr[i].title.toLowerCase().includes(searchKey.toLowerCase()) ||
+      tasksArr[i].category.toLowerCase().includes(searchKey.toLowerCase())
+    ) {
+      displayTasks(i);
+    }
+  }
+}
+// *==============================>validation
+var titleRegex = /^[a-zA-Z]{3,}/;
+var descriptionRegex = /^(?=.{5,100}$)\w{1,}(\s\w*)*$/;
+
+function validate(regex, element) {
+  if (regex.test(element.value)) {
+    element.classList.add("is-valid");
+    element.classList.remove("is-invalid");
+    element.parentElement.nextElementSibling.classList.add("d-none");
+
+    return true;
+  } else {
+    element.classList.add("is-invalid");
+    element.classList.remove("is-valid");
+    element.parentElement.nextElementSibling.classList.remove("d-none");
+    return false;
+  }
+}
+taskTitle.addEventListener("input",()=> {
+  validate(titleRegex, taskTitle);
+});
+taskDescription.addEventListener("input", ()=> {
+  validate(descriptionRegex, taskDescription);
+});
+
+// &======================>remaining counter
+taskDescription.addEventListener("input", ()=> {
+let remaining=maxCounter-taskDescription.value.length
+remainingCounter.innerHTML=remaining
+});
+
+
+
