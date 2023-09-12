@@ -22,13 +22,12 @@ const searchInput = document.getElementById("searchInput");
 const titleAlert = document.getElementById("titleAlert");
 const descAlert = document.getElementById("descAlert");
 
-
 const remainingCounter = document.getElementById("remainingCounter");
 
 // *===========>VARIABLES============================>
 let updatedTaskIndex;
 let color;
-let maxCounter=100
+let maxCounter = 100;
 const container = {
   inProgress: document.getElementById("inProgress"),
   nextUp: document.getElementById("nextUp"),
@@ -88,6 +87,7 @@ function addNewTask() {
     hideModel();
     displayTasks(tasksArr.length - 1);
     clear();
+    resetRemCounter();
   }
 }
 
@@ -96,7 +96,7 @@ function displayTasks(index) {
     <div class="task">
     <h3 class="text-capitalize">${tasksArr[index]?.title}</h3>
     <p class="description text-capitalize">${tasksArr[index]?.description}</p>
-    <h4 class="category ${tasksArr[index]?.category} text-capitalize">${tasksArr[index]?.category}</h4>
+    <h4 class="category categotryHead ${tasksArr[index]?.category} text-capitalize px-3 py-2">${tasksArr[index]?.category}</h4>
     <ul class="task-options list-unstyled d-flex gap-3 fs-5 m-0">
     <li><i class="bi bi-pencil-square" onclick="setTaskForUpdate(${index})"></i></li>
             <li><i class="bi bi-trash-fill" onclick="deleteTask(${index})"></i></li>
@@ -106,7 +106,7 @@ function displayTasks(index) {
       `;
 
   let x = tasksArr[index].status;
-  
+
   x.innerHTML = taskHTML;
   container[x].querySelector(".tasks").innerHTML += taskHTML;
   setTasksInLocalStorage();
@@ -160,6 +160,7 @@ function updateTask() {
   addBtn.classList.replace("d-none", "d-block");
   updateBtn.classList.replace("d-block", "d-none");
   clear();
+  resetRemCounter();
 }
 function generateColor() {
   var colorChar = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "a", "b", "c", "d", "e", "f"];
@@ -193,24 +194,37 @@ function changeViewToGrid() {
     containerTasks[j].removeAttribute("data-view");
   }
 }
+
 function changeMode() {
   if (modeBtn.classList.contains("bi-moon-stars-fill")) {
     root.style.setProperty("--main-black", "white");
     root.style.setProperty("--text-color", "black");
     root.style.setProperty("--sec-black", "#fafafa");
     root.style.setProperty("--mid-gray", "#dadada");
+    root.style.setProperty("--categotryHead-color", "white");
+    root.style.setProperty("--bs-btn-color", "rgb(94, 227, 0)");
     modeBtn.classList.replace("bi-moon-stars-fill", "bi-brightness-high-fill");
+    let btn = Array.from(document.querySelectorAll(".btn"));
+    for (let i = 0; i < btn.length; i++) {
+      btn[i].classList.add("cLight")
+    }
   } else {
     root.style.setProperty("--main-black", "#0d1117");
     root.style.setProperty("--text-color", "#a5a6a7");
     root.style.setProperty("--sec-black", "#161b22");
     root.style.setProperty("--mid-gray", "#474a4e");
+    addBtn.style.setProperty("--bs-btn-color", "green");
+    root.style.setProperty("--categotryHead-color", "#a5a6a7");
+
     modeBtn.classList.replace("bi-brightness-high-fill", "bi-moon-stars-fill");
+    let btn = Array.from(document.querySelectorAll(".btn"));
+    for (let i = 0; i < btn.length; i++) {
+      btn[i].classList.remove("cLight")
+    }
   }
 }
 function searchTask() {
   emptyContainer();
-  // resetCount();
   var searchKey = searchInput.value;
   for (var i = 0; i < tasksArr.length; i++) {
     if (
@@ -239,18 +253,18 @@ function validate(regex, element) {
     return false;
   }
 }
-taskTitle.addEventListener("input",()=> {
+taskTitle.addEventListener("input", () => {
   validate(titleRegex, taskTitle);
 });
-taskDescription.addEventListener("input", ()=> {
+taskDescription.addEventListener("input", () => {
   validate(descriptionRegex, taskDescription);
 });
 
 // &======================>remaining counter
-taskDescription.addEventListener("input", ()=> {
-let remaining=maxCounter-taskDescription.value.length
-remainingCounter.innerHTML=remaining
+taskDescription.addEventListener("input", () => {
+  let remaining = maxCounter - taskDescription.value.length;
+  remainingCounter.innerHTML = remaining;
 });
-
-
-
+function resetRemCounter() {
+  remainingCounter.innerHTML = 100;
+}
