@@ -28,7 +28,6 @@
 .btn-new-task {
     --bs-btn-bg: teal;
     --bs-btn-border-color: teal;
-    --bs-btn-hover-color: #222;
     --bs-btn-hover-bg: rgb(39, 97, 97);
     --bs-btn-hover-border-color: rgb(39, 97, 97);
 }
@@ -37,9 +36,7 @@
     --bs-btn-color: #f1f1f1;
     --bs-btn-bg: #1f4c56;
     --bs-btn-border-color: #1f4c56;
-    --bs-btn-hover-color: #fff;
     --bs-btn-hover-bg: #213034;
-    --bs-btn-hover-border-color: #213034;
 }
 
 
@@ -212,9 +209,9 @@ ul .layout,
     transition-duration: 0.3s;
 }
 
-.main-container button:hover {
+/* .main-container button:hover {
     background-color: var(--bs-btn-hover-bg) !important;
-}
+} */
 
 .tasks-container h2 {
     font-size: 20px;

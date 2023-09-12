@@ -213,7 +213,6 @@ function changeMode() {
     root.style.setProperty("--text-color", "#a5a6a7");
     root.style.setProperty("--sec-black", "#161b22");
     root.style.setProperty("--mid-gray", "#474a4e");
-    addBtn.style.setProperty("--bs-btn-color", "green");
     root.style.setProperty("--categotryHead-color", "#a5a6a7");
 
     modeBtn.classList.replace("bi-brightness-high-fill", "bi-moon-stars-fill");
