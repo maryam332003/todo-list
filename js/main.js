@@ -50,13 +50,23 @@ searchInput.addEventListener("input", searchTask);
 function showModel() {
   model.classList.replace("d-none", "d-flex");
   document.body.style.overflow = "hidden";
+  hideAlert()
+  resetRemCounter()
 }
 function hideModel() {
   model.classList.replace("d-flex", "d-none");
   addBtn.classList.replace("d-none", "d-block");
   updateBtn.classList.replace("d-block", "d-none");
   document.body.style.overflow = "visible";
+  hideAlert()
   clear();
+  resetRemCounter()
+}
+function hideAlert() {
+  let alert = Array.from(document.querySelectorAll(".alert"));
+  for(let i=0;i<alert.length;i++){
+    alert[i].classList.add("d-none");
+  }  
 }
 //?=================>HIDE MODEL USING ESCAPE
 document.addEventListener("keydown", function (e) {
@@ -71,7 +81,10 @@ model.addEventListener("click", function (e) {
     hideModel();
   }
 });
+
+console.log(alert);
 function addNewTask() {
+  alert.classList.add("d-none");
   if (
     validate(titleRegex, taskTitle) &&
     validate(descriptionRegex, taskDescription)
@@ -206,7 +219,7 @@ function changeMode() {
     modeBtn.classList.replace("bi-moon-stars-fill", "bi-brightness-high-fill");
     let btn = Array.from(document.querySelectorAll(".btn"));
     for (let i = 0; i < btn.length; i++) {
-      btn[i].classList.add("cLight")
+      btn[i].classList.add("cLight");
     }
   } else {
     root.style.setProperty("--main-black", "#0d1117");
@@ -218,7 +231,7 @@ function changeMode() {
     modeBtn.classList.replace("bi-brightness-high-fill", "bi-moon-stars-fill");
     let btn = Array.from(document.querySelectorAll(".btn"));
     for (let i = 0; i < btn.length; i++) {
-      btn[i].classList.remove("cLight")
+      btn[i].classList.remove("cLight");
     }
   }
 }

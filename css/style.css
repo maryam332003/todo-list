@@ -13,8 +13,12 @@
     --webkit-scrollbar-thumb-hover:#02050b;
 
 }
+button ,i{
+    cursor: pointer;
+}
 .cLight{
     color: white;
+    border: none;
 }
 .btnLight{
     border-radius: 5px;
@@ -181,7 +185,6 @@ ul .layout,
     justify-content: center;
     align-items: center;
 }
-
 .main-container ul li i {
     color: var(--text-color);
 }
