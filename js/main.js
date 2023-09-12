@@ -84,7 +84,7 @@ model.addEventListener("click", function (e) {
 
 console.log(alert);
 function addNewTask() {
-  alert.classList.add("d-none");
+
   if (
     validate(titleRegex, taskTitle) &&
     validate(descriptionRegex, taskDescription)
